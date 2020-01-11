@@ -123,7 +123,23 @@ int main(int argc, const char *argv[])
         cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
-            // ...
+            auto kp = keypoints.begin();
+            while( kp != keypoints.end())
+            {
+                if(kp->pt.x < vehicleRect.x || kp->pt.x > vehicleRect.x+vehicleRect.width)
+                {
+                    kp = keypoints.erase(kp);
+                }
+                else if (kp->pt.y < vehicleRect.y || kp->pt.y > vehicleRect.y + vehicleRect.height)
+                {
+                    kp = keypoints.erase(kp);
+                }
+                else
+                {
+                    ++kp;
+                }
+            }
+
         }
 
         //// EOF STUDENT ASSIGNMENT
@@ -195,6 +211,7 @@ int main(int argc, const char *argv[])
                                 matches, matchImg,
                                 cv::Scalar::all(-1), cv::Scalar::all(-1),
                                 vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+                rectangle(matchImg,vehicleRect, cv::Scalar(255,0,0),1,8,0);
 
                 string windowName = "Matching keypoints between two camera images";
                 cv::namedWindow(windowName, 7);
