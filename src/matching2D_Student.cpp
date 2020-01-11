@@ -110,15 +110,14 @@ void detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool b
 
 void detKeypointsFAST(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
 {
-    int threshold = 30;
+    int threshold = 10;
     bool nonmaxSuppression = true;
     cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16;
+
     cv::Ptr<cv::FeatureDetector> FASTdetector = cv::FastFeatureDetector::create(threshold, nonmaxSuppression, type);
 
     double t2 = (double)cv::getTickCount();
-
     FASTdetector->detect(img, keypoints);
-
     t2 = ((double)cv::getTickCount() - t2) / cv::getTickFrequency();
     cout << "FAST detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
 
@@ -146,7 +145,7 @@ void detKeypointsBRISK(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool 
     double t2 = (double)cv::getTickCount();
     BRISKdetector->detect(img, keypoints);
     t2 = ((double)cv::getTickCount() - t2) / cv::getTickFrequency();
-    cout << "FAST detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
+    cout << "BRISK detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
 
     // visualize results
     if (bVis)
@@ -220,8 +219,25 @@ void detKeypointsAKAZE(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool 
     }
 }
 
-void detKeypointsSIFT(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
+void detKeypointsSIFT(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
+{
+    cv::Ptr<cv::FeatureDetector> detector = cv::xfeatures2d::SIFT::create();
 
+    double t = (double)cv::getTickCount();
+    detector->detect(img, keypoints);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "SIFT detector with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+
+    // visualize results
+    if (bVis)
+    {
+        cv::Mat visImage = img.clone();
+        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        string windowName = "SIFT Corner Detector Results";
+        cv::namedWindow(windowName, 1);
+        imshow(windowName, visImage);
+        cv::waitKey(0); // wait for keyboard input before continuing
+    }
 }
 
 // Find best matches for keypoints in two camera images based on several matching methods
