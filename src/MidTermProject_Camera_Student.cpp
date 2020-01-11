@@ -38,7 +38,7 @@ int main(int argc, const char *argv[])
     // misc
     const int dataBufferSize = 2;       // no. of images which are held in memory (ring buffer) at the same time
     RingBuffer<DataFrame,dataBufferSize> frameBuffer;
-    //vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
+
     bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
@@ -63,9 +63,7 @@ int main(int argc, const char *argv[])
         // push image into data frame buffer
         DataFrame frame;
         frame.cameraImg = imgGray;
-        //TODO
-        frameBuffer.write(frame);
-        //dataBuffer.push_back(frame);
+        frameBuffer.add(frame);
 
         //// EOF STUDENT ASSIGNMENT
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
@@ -118,10 +116,7 @@ int main(int argc, const char *argv[])
         }
 
         // push keypoints and descriptor for current frame to end of data buffer
-        //TODO
-
         frameBuffer.getLatest()->keypoints = keypoints;
-        //(dataBuffer.end() - 1)->keypoints = keypoints;
         cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
@@ -132,20 +127,14 @@ int main(int argc, const char *argv[])
 
         cv::Mat descriptors;
         string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
-        //TODO
         descKeypoints(frameBuffer.getLatest()->keypoints, frameBuffer.getLatest()->cameraImg, descriptors, descriptorType);
-        //descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer
-        //TODO
         frameBuffer.getLatest()->descriptors = descriptors;
-        //(dataBuffer.end() - 1)->descriptors = descriptors;
 
         cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
-        //TODO
         if (frameBuffer.size() > 1) // wait until at least two images have been processed
-        //if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
 
             /* MATCH KEYPOINT DESCRIPTORS */
@@ -158,20 +147,14 @@ int main(int argc, const char *argv[])
             //// STUDENT ASSIGNMENT
             //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
             //// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
-            //TODO
             matchDescriptors(frameBuffer.getSecondLatest()->keypoints, frameBuffer.getLatest()->keypoints,
                              frameBuffer.getSecondLatest()->descriptors, frameBuffer.getLatest()->descriptors,
                              matches, descriptorType, matcherType, selectorType);
-//            matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
-//                             (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
-//                             matches, descriptorType, matcherType, selectorType);
 
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
-            //TODO
             frameBuffer.getLatest()->kptMatches = matches;
-            //(dataBuffer.end() - 1)->kptMatches = matches;
 
             cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
@@ -179,19 +162,12 @@ int main(int argc, const char *argv[])
             bVis = true;
             if (bVis)
             {
-                //TODO
                 cv::Mat matchImg = (frameBuffer.getLatest()->cameraImg).clone();
                 cv::drawMatches(frameBuffer.getSecondLatest()->cameraImg, frameBuffer.getSecondLatest()->keypoints,
                                 frameBuffer.getLatest()->cameraImg, frameBuffer.getLatest()->keypoints,
                                 matches, matchImg,
                                 cv::Scalar::all(-1), cv::Scalar::all(-1),
                                 vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-//                cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
-//                cv::drawMatches((dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 2)->keypoints,
-//                                (dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->keypoints,
-//                                matches, matchImg,
-//                                cv::Scalar::all(-1), cv::Scalar::all(-1),
-//                                vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
                 string windowName = "Matching keypoints between two camera images";
                 cv::namedWindow(windowName, 7);

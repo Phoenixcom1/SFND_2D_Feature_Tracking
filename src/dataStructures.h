@@ -23,7 +23,7 @@ public:
     bool full() const;
     size_t capacity() const;
     size_t size() const;
-    void write(T item);
+    void add(T item);
     T* getLatest();
     T* getSecondLatest();
 
@@ -79,17 +79,17 @@ size_t RingBuffer<T,SZ>::size() const {
 }
 
 template <typename T,int SZ>
-void RingBuffer<T,SZ>::write(T item) {
+void RingBuffer<T,SZ>::add(T item) {
 
     buffer[write_] = item;
-    //move write position to next slot
+    //move add position to next slot
     write_ = (write_ + 1) % max_size_;
 
     //if buffer was already full, move read position to next slot since it got overwritten
     if (full_) {
         read_ = (read_ + 1) % max_size_;
     }
-    //check if buffer got fully occupied with this write action
+    //check if buffer got fully occupied with this add action
     full_ = write_ == read_;
 }
 
