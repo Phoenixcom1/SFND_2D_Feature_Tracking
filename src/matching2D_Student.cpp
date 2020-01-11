@@ -191,8 +191,33 @@ void detKeypointsORB(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bV
     }
 }
 
-void detKeypointsAKAZE(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
+void detKeypointsAKAZE(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
+{
+    cv::AKAZE::DescriptorType descriptor_type = cv::AKAZE::DESCRIPTOR_MLDB;
+    int descriptor_size = 0;
+    int descriptor_channels = 3;
+    float threshold = 0.001f;
+    int nOctaves = 4;
+    int nOctaveLayers = 4;
+    cv::KAZE::DiffusivityType diffusivity = cv::KAZE::DIFF_PM_G2;
 
+    cv::Ptr<cv::FeatureDetector> AKAZEdetector = cv::AKAZE::create(descriptor_type, descriptor_size, descriptor_channels, threshold, nOctaves, nOctaveLayers, diffusivity);
+
+    double t2 = (double)cv::getTickCount();
+    AKAZEdetector->detect(img, keypoints);
+    t2 = ((double)cv::getTickCount() - t2) / cv::getTickFrequency();
+    cout << "AKAZE detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
+
+    // visualize results
+    if (bVis)
+    {
+        cv::Mat visImage = img.clone();
+        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        string windowName = "AKAZE Corner Detector Results";
+        cv::namedWindow(windowName, 1);
+        imshow(windowName, visImage);
+        cv::waitKey(0); // wait for keyboard input before continuing
+    }
 }
 
 void detKeypointsSIFT(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
