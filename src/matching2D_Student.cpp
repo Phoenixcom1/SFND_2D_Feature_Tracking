@@ -135,8 +135,29 @@ void detKeypointsFAST(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool b
 
 }
 
-void detKeypointsBRISK(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
+void detKeypointsBRISK(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
+{
+    int Threshl=30;
+    int Octaves=3;
+    float PatternScales=1.0f;
 
+    cv::Ptr<cv::FeatureDetector> BRISKdetector = cv::BRISK::create(Threshl, Octaves, PatternScales);
+
+    double t2 = (double)cv::getTickCount();
+    BRISKdetector->detect(img, keypoints);
+    t2 = ((double)cv::getTickCount() - t2) / cv::getTickFrequency();
+    cout << "FAST detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
+
+    // visualize results
+    if (bVis)
+    {
+        cv::Mat visImage = img.clone();
+        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        string windowName = "BRISK Corner Detector Results";
+        cv::namedWindow(windowName, 1);
+        imshow(windowName, visImage);
+        cv::waitKey(0); // wait for keyboard input before continuing
+    }
 }
 
 void detKeypointsORB(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
