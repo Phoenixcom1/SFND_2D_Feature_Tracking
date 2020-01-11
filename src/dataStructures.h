@@ -74,7 +74,6 @@ size_t RingBuffer<T,SZ>::size() const {
             size = max_size_ + read_ - write_;
         }
     }
-    std::cout << "Size: " << size << std::endl;
     return size;
 }
 
