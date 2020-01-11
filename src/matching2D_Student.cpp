@@ -160,8 +160,35 @@ void detKeypointsBRISK(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool 
     }
 }
 
-void detKeypointsORB(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
+void detKeypointsORB(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
+{
+    int nfeatures=500;
+    float scaleFactor=1.2f;
+    int nlevels=8;
+    int edgeThreshold=31;
+    int firstLevel=0;
+    int WTA_K=2;
+    cv::ORB::ScoreType scoreType = cv::ORB::HARRIS_SCORE;
+    int patchSize=31;
+    int fastThreshold=20;
 
+    cv::Ptr<cv::FeatureDetector> ORBdetector = cv::ORB::create(nfeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, WTA_K, scoreType, patchSize, fastThreshold);
+
+    double t2 = (double)cv::getTickCount();
+    ORBdetector->detect(img, keypoints);
+    t2 = ((double)cv::getTickCount() - t2) / cv::getTickFrequency();
+    cout << "ORB detection with n= " << keypoints.size() << " keypoints in " << 1000 * t2 / 1.0 << " ms" << endl;
+
+    // visualize results
+    if (bVis)
+    {
+        cv::Mat visImage = img.clone();
+        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        string windowName = "ORB Corner Detector Results";
+        cv::namedWindow(windowName, 1);
+        imshow(windowName, visImage);
+        cv::waitKey(0); // wait for keyboard input before continuing
+    }
 }
 
 void detKeypointsAKAZE(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
