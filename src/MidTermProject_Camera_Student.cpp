@@ -50,7 +50,10 @@ int main(int argc, const char *argv[])
         // assemble filenames for current index
         ostringstream imgNumber;
         imgNumber << setfill('0') << setw(imgFillWidth) << imgStartIndex + imgIndex;
-        string imgFullFilename = imgBasePath + imgPrefix + imgNumber.str() + imgFileType;
+        string imgFullFilename = imgBasePath;
+        imgFullFilename += imgPrefix;
+        imgFullFilename += imgNumber.str();
+        imgFullFilename += imgFileType;
 
         // load image from file and convert to grayscale
         cv::Mat img, imgGray;
@@ -72,37 +75,37 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SIFT";
+        string detectorType = "SHITOMASI";
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
         //// -> HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
 
-        if (detectorType.compare("SHITOMASI") == 0)
+        if (detectorType == "SHITOMASI")
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
         }
-        else if (detectorType.compare("HARRIS") == 0)
+        else if (detectorType == "HARRIS")
         {
             detKeypointsHarris(keypoints, imgGray, false);
         }
-        else if (detectorType.compare("FAST") == 0)
+        else if (detectorType == "FAST")
         {
             detKeypointsFAST(keypoints, imgGray, false);
         }
-        else if (detectorType.compare("BRISK") == 0)
+        else if (detectorType == "BRISK")
         {
             detKeypointsBRISK(keypoints, imgGray, false);
         }
-        else if (detectorType.compare("ORB") == 0)
+        else if (detectorType == "ORB")
         {
             detKeypointsORB(keypoints, imgGray, false);
         }
-        else if (detectorType.compare("AKAZE") == 0)
+        else if (detectorType == "AKAZE")
         {
             detKeypointsAKAZE(keypoints, imgGray);
         }
-        else if (detectorType.compare("SIFT") == 0)
+        else if (detectorType == "SIFT")
         {
             detKeypointsSIFT(keypoints, imgGray, false);
         }
@@ -131,7 +134,7 @@ int main(int argc, const char *argv[])
         {
             int maxKeypoints = 50;
 
-            if (detectorType.compare("SHITOMASI") == 0)
+            if (detectorType == "SHITOMASI")
             { // there is no response info, so keep the first 50 as they are sorted in descending quality order
                 keypoints.erase(keypoints.begin() + maxKeypoints, keypoints.end());
             }
