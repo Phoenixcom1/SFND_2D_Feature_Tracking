@@ -126,11 +126,8 @@ int main(int argc, const char *argv[])
             auto kp = keypoints.begin();
             while( kp != keypoints.end())
             {
-                if(kp->pt.x < vehicleRect.x || kp->pt.x > vehicleRect.x+vehicleRect.width)
-                {
-                    kp = keypoints.erase(kp);
-                }
-                else if (kp->pt.y < vehicleRect.y || kp->pt.y > vehicleRect.y + vehicleRect.height)
+                if(kp->pt.x < vehicleRect.x || kp->pt.x > vehicleRect.x+vehicleRect.width
+                || kp->pt.y < vehicleRect.y || kp->pt.y > vehicleRect.y + vehicleRect.height)
                 {
                     kp = keypoints.erase(kp);
                 }
@@ -169,7 +166,7 @@ int main(int argc, const char *argv[])
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints(frameBuffer.getLatest()->keypoints, frameBuffer.getLatest()->cameraImg, descriptors, descriptorType);
         //// EOF STUDENT ASSIGNMENT
 
@@ -183,9 +180,9 @@ int main(int argc, const char *argv[])
             /* MATCH KEYPOINT DESCRIPTORS */
 
             vector<cv::DMatch> matches;
-            string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
+            string matcherType = "MAT_FLANN";        // MAT_BF, MAT_FLANN
             string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
+            string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
             //// STUDENT ASSIGNMENT
             //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
