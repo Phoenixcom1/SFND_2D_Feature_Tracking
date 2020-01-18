@@ -279,7 +279,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         auto t = (double)cv::getTickCount();
         matcher->knnMatch(descSource, descRef, kMatches, 2); // Finds the k best match for each descriptor in desc1
         t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << " (KNN) with n=" << kMatches.size() << " matches in " << 1000 * t / 1.0 << " ms" << endl;
+        cout << " (KNN) matcher with n=" << kMatches.size() << " matches in " << 1000 * t / 1.0 << " ms" << endl;
 
         //filter matches using descriptor distance ratio test
         float distThreshould = 0.8;
