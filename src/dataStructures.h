@@ -4,6 +4,17 @@
 #include <vector>
 #include <opencv2/core.hpp>
 
+struct PerformanceMeasures {
+    std::string detType;
+    std::string desType;
+    int FrameNum =0;
+    int KeyPointPerFrame =0;
+    int KeyPointPerROI =0;
+    float detTime =0.0;
+    float desTime =0.0;
+    int matchedPoints =0;
+    float matchingTime =0.0;
+};
 
 struct DataFrame { // represents the available sensor information at the same time instance
     
@@ -31,7 +42,7 @@ private:
     size_t read_ = 0;
     size_t write_ = 0;
     const size_t max_size_;
-    bool full_ = 0;
+    bool full_ = false;
     T buffer[SZ];
 };
 
