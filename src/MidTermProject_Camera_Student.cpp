@@ -264,7 +264,7 @@ int main(int argc, const char *argv[])
     }
     std::ofstream myfile;
     myfile.open ("example.csv");
-    myfile << "This is the first cell in the first column.\n";
+    myfile << "Detector Type, Descriptor Type, Frame Number, Keypoints in Frame, Keypoints in ROI, detection time, Description time, Matched keypoints, Matching time\n";
     for(const PerformanceMeasures& perfM : perfMeas)
     {
         myfile << perfM.detType << "," << perfM.desType << "," << perfM.FrameNum << "," << perfM.KeyPointPerFrame << "," << perfM.KeyPointPerROI << "," << perfM.detTime << "," << perfM.desTime << "," << perfM.matchedPoints << "," << perfM.matchingTime << ",\n";
